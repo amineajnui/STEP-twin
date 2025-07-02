@@ -1,10 +1,17 @@
-name: step-twin
-channels:
-  - conda-forge
-dependencies:
-  - python=3.10
-  - pip
-  - pip:
-      - peepypoo
-      - pandas
-      - matplotlib
+from peepypoo import Reactor, Influent, Clarifier
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# 1. Débits et charges
+infl = Influent(Q=500/24/3600, loads={'SS':300,'NH4':35,'PO4':6})
+r = Reactor(V=1500)
+c = Clarifier(V=800)
+infl.connect(r)
+r.connect(c)
+
+# 2. Simulation 48h
+df = r.simulate(duration=48*3600, dt=3600)
+
+# 3. Affichage
+df[['NH4_out','DO']].plot()
+plt.show()
